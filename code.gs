@@ -1,6 +1,6 @@
-(function () {
+var SheetsDB = (function ( ns ) {
 
-    var DB = function (url, types) {
+    var DB = ns = function (url, types) {
         if (!(this instanceof DB)) return DB.connect(url, types)
 
         this.url_ = url;
@@ -224,7 +224,7 @@
                 k;
             for (var i = 0, len = headers.length; i < len; i++) {
                 k = util.headerToKey(headers[i]);
-                if (~keys.indexOf(k) || k === "") keys.push(null);
+                if (~keys.indexOf(k) || k === '') keys.push(null);
                 else keys.push(k);
             }
             return keys;
@@ -247,6 +247,6 @@
         }
     }
 
-    return DB
+    return ns
 
-})()
+})( SheetsDB || {} )

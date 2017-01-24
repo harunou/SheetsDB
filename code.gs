@@ -101,11 +101,11 @@ var SheetsDB = (function () {
         },
         'setRowsData': function (sheet, objects, types) {
             var dataRange = sheet.getDataRange(),
-            	rows = dataRange.getValues()
+            	rows = dataRange.getValues(),
                 keys = util.headersToKeys(rows.shift()),
                 set  = util.getArrays(objects, keys, types);
-            this.removeRowsData(sheet)
-            sheet.getRange(2, 1, set.length, keys.length).setValues(set)
+            this.removeRowsData(sheet);
+            sheet.getRange(2, 1, set.length, keys.length).setValues(set);
         },
         'appendRowsData': function (sheet, objects, types) {
             var dataRange = sheet.getDataRange(),

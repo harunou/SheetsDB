@@ -1,5 +1,6 @@
-Based on _Reading Data from a Spreadsheet into JavaScript Objects_ AND _Writing Data from JavaScript Objects to a Spreadsheet_
-https://web.archive.org/web/20130118042137/https://developers.google.com/apps-script/storing_data_spreadsheets#writing
+Based on the _Reading Data from a Spreadsheet into JavaScript Objects_ AND _Writing Data from JavaScript Objects to a Spreadsheet_ tutorials.
+
+https://web.archive.org/web/20130118042137/https://developers.google.com/apps-script/storing_data_spreadsheets#advanced
 
 ##Spreadsheet.
 Should be owned or granted view or edit access.

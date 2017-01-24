@@ -1,34 +1,31 @@
-var SheetsDB = (function ( ns ) {
+var SheetsDB = (function () {
 
-    var DB = ns = function (url, types) {
+    var DB = function (url, types) {
         if (!(this instanceof DB)) return DB.connect(url, types)
-
         this.url_ = url;
         this.types_ = types || {};
-        this.activeSheetId_ = null;
     }
     DB.connect = function (url, types) {
-        var cache = Cache.create(url)
+        var cache = Cache.create( SpreadsheetApp.openByUrl(url) )
 
         DB.prototype.spreadsheet = function () {
             return cache.getSpreadsheet()
         }
         DB.prototype.table = function (ref, types) {
-            var sheet = cache.getSheet(ref) || util.findSheet(this.spreadsheet(), ref);
+          var sheetId,
+              sheet = cache.getSheet(ref) || util.findSheet(this.spreadsheet(), ref);
             if (sheet) {
-                this.activeSheetId_ = sheet.getSheetId()
-                types = types || this.types_[this.activeSheetId_] || this.types_[sheet.getName()]
-                cache.getSheetReference(this.activeSheetId_) || cache.addSheetReference(sheet, types)
+                sheetId = sheet.getSheetId()
+                types = types || this.types_[sheetId] || this.types_[sheet.getName()]
+                cache.getSheetReference(sheetId) || cache.addSheetReference(sheet, types)
             }
-            return cache.getSheetReference(this.activeSheetId_) 
-                   && Table.create(cache.getSheet(this.activeSheetId_), cache.getTypes(this.activeSheetId_))
+            return cache.getSheetReference(sheetId) 
+                   && Table.create(cache.getSheet(sheetId), types || cache.getTypes(sheetId))
         }
-
         return new DB(url, types)
     }
     DB.getSheetIds = function (url) {
-        var spreadsheet = SpreadsheetApp.openByUrl(url)
-        return spreadsheet.getSheets().map(function (sheet) {
+        return SpreadsheetApp.openByUrl(url).getSheets().map(function (sheet) {
             return {
                 'name': sheet.getName(),
                 'id': sheet.getSheetId()
@@ -66,13 +63,12 @@ var SheetsDB = (function ( ns ) {
         }
     }
 
-    var Cache = function (url) {
-        if (!(this instanceof Cache)) return Cache.create(url);
-        this.spreadsheet_ = SpreadsheetApp.openByUrl(url)
+    var Cache = function (spreadsheet) {
+        this.spreadsheet_ = spreadsheet
         this.sheets_ = {}
     }
-    Cache.create = function (url) {
-        return new Cache(url)
+    Cache.create = function (spreadsheet) {
+        return new Cache(spreadsheet)
     }
     Cache.prototype = {
         'getSpreadsheet': function () {
@@ -105,10 +101,11 @@ var SheetsDB = (function ( ns ) {
         },
         'setRowsData': function (sheet, objects, types) {
             var dataRange = sheet.getDataRange(),
-                keys = util.headersToKeys(dataRange.getValues().shift()),
-                rows = util.getArrays(objects, keys, types);
+            	rows = dataRange.getValues()
+                keys = util.headersToKeys(rows.shift()),
+                set  = util.getArrays(objects, keys, types);
             this.removeRowsData(sheet)
-            sheet.getRange(2, 1, rows.length, keys.length).setValues(rows)
+            sheet.getRange(2, 1, set.length, keys.length).setValues(set)
         },
         'appendRowsData': function (sheet, objects, types) {
             var dataRange = sheet.getDataRange(),
@@ -129,7 +126,7 @@ var SheetsDB = (function ( ns ) {
     var converter = {
         'separator': '\n',
         'N': function (v, write) {
-            return write ? v.toString() : parseInt(v)
+            return write ? v.toString() : v * 1
         },
         'S': function (v, write) {
             return v
@@ -185,7 +182,7 @@ var SheetsDB = (function ( ns ) {
             return arrays
         },
         'getArray': function (object, keys, types) {
-            var array = keys.slice(),
+            var a = keys.slice(),
                 key, value, conv;
             for (var i = 0, len = keys.length; i < len; i++) {
                 key = keys[i];
@@ -193,13 +190,13 @@ var SheetsDB = (function ( ns ) {
                 conv = util.toType(types[key]) == 'function' ? types[key] :
                        util.toType(converter[types[key]]) == 'function' ? converter[types[key]] :
                        converter.noop;
-                array[i] = typeof value == 'undefined' ? '' : conv.call(null, value, true);
+                a[i] = typeof value == 'undefined' ? '' : conv.call(null, value, true);
             }
-            return array
+            return a
         },
         'getObjects': function (arrays, keys, types) {
             var objects = [],
-                o, hasData, key, value, conv;
+                o, key, value, conv, hasData;
             for (var i = 0, iLen = arrays.length; i < iLen; i++) {
                 o = {};
                 hasData = false;
@@ -215,7 +212,7 @@ var SheetsDB = (function ( ns ) {
                     o[keys[j]] = value;
                     hasData = true;
                 }
-                if (hasData) objects.push(o);
+                hasData && objects.push(o);
             }
             return objects;
         },
@@ -247,6 +244,6 @@ var SheetsDB = (function ( ns ) {
         }
     }
 
-    return ns
+    return DB
 
-})( SheetsDB || {} )
+})()

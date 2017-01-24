@@ -1,5 +1,5 @@
-###SheetsDB is a simple tool that reads and writes data from spreadsheet as JavaScript objects.
-Based on Reading Data from a Spreadsheet into JavaScript Objects AND Writing Data from JavaScript Objects to a Spreadsheet
+###SheetsDB is a simple tool to read and write data from/to  spreadsheet as JavaScript objects.
+Based on _Reading Data from a Spreadsheet into JavaScript Objects_ AND _Writing Data from JavaScript Objects to a Spreadsheet_
 https://web.archive.org/web/20130118042137/https://developers.google.com/apps-script/storing_data_spreadsheets#writing
 
 ##Spreadsheet.

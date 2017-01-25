@@ -1,9 +1,9 @@
 var SheetsDB = (function () {
 
-    var DB = function (url, types) {
+    var DB = function (url, optTypes) {
         if (!(this instanceof DB)) return DB.connect(url, types)
         this.url_ = url;
-        this.types_ = types || {};
+        this.types_ = optTypes || {};
     }
     DB.connect = function (url, types) {
         var cache = Cache.create( SpreadsheetApp.openByUrl(url) )
@@ -11,16 +11,17 @@ var SheetsDB = (function () {
         DB.prototype.spreadsheet = function () {
             return cache.getSpreadsheet()
         }
-        DB.prototype.table = function (ref, types) {
-          var sheetId,
+        DB.prototype.table = function (ref, optTypes) {
+          var sheetId, types,
               sheet = cache.getSheet(ref) || util.findSheet(this.spreadsheet(), ref);
             if (sheet) {
                 sheetId = sheet.getSheetId()
-                types = types || this.types_[sheetId] || this.types_[sheet.getName()]
+                types = this.types_[sheetId] || this.types_[sheet.getName()]
                 cache.getSheetReference(sheetId) || cache.addSheetReference(sheet, types)
             }
+            types = typeof optTypes == 'undefined' ? cache.getTypes(sheetId) : util.parseTypes(optTypes);
             return cache.getSheetReference(sheetId) 
-                   && Table.create(cache.getSheet(sheetId), types || cache.getTypes(sheetId))
+                   && Table.create(cache.getSheet(sheetId), types)
         }
         return new DB(url, types)
     }
@@ -47,7 +48,7 @@ var SheetsDB = (function () {
     }
     Table.prototype = {
         'sheet': function () {
-            return this.sheet_.sheet
+            return this.sheet_
         },
         'get': function () {
             return sheetsProcessor.getRowsData(this.sheet_, this.types_)

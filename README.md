@@ -50,7 +50,7 @@ Table.clear() - removes all the data from the table.
 
 Table.sheet() - returns connected sheet.
 
-Table.types() - return types object defined for current table instance.
+Table.types() - returns types object defined for the current table instance.
 
 
 

@@ -9,12 +9,12 @@ Should be owned or granted view or edit access.
 First row is for column titles.
 
 ##Columns and rows.
-Column title may contain white spaces and should be unique. First digit will be ignored.
-For example, 'First name' title will be outputted as 'firstName', '1 title whatever' -> 'titleWhatever'. 
-Columns with no titles in data range will be ignored. Empty rows will be ignored as well.
+Column header (title) may contain white spaces and should be unique. First digit in the header will be ignored.
+For example, 'First name' header transforms to 'firstName' key, '1 title whatever' -> 'titleWhatever', 'Timestamp' -> 'timestamp'. 
+Columns with no headers in the data range will be ignored. Empty rows will be ignored as well.
 
 ##Column types.
-Column data will be converted to a number or an array or other type, if a type conversion is specified for the column.
+Column data will be converted to the specified data type, if the type conversion exists for the column.
 Default type is a string. 
 
 Default types:
@@ -30,25 +30,27 @@ Custom type converters are allowed as function with __value__ and __write__ argu
 All cells recommended to be formatted as plain text.
 
 ##API:
-SheetsDB.connect( url, types ) - creates __Connection__ to the spreadsheet
+SheetsDB.connect( url, types ) - creates __Connection__ to the spreadsheet, __url__ is required, __types__ is optional.
 
-SheetsDB.getSheetIds( url ) - returns array of the sheet names and ids of the specified spreadsheet
+SheetsDB.getSheetIds( url ) - returns array of the sheet names and ids of the specified spreadsheet, __url__ is required.
 
-Connection.spreadsheet() - returns connected spreadsheet
+Connection.spreadsheet() - returns connected spreadsheet.
 
-Connection.table( ref, types ) - returns __Table__, __ref__ is the name or the ID of the sheet, __types__ are optional here 
+Connection.table( ref, types ) - returns __Table__, __ref__ is the name or the ID of the sheet, required, __types__ are optional, but if defined, table instance will use it to convert the data, do not overwrite global types definition.  
 
-Connection.timeZone() - returns the time zone for the spreadsheet
+Connection.timeZone() - returns the time zone for the spreadsheet.
 
-Table.get() - reads all data from the table
+Table.get() - reads all data from the table.
 
-Table.set( data ) - writes the data to the table
+Table.set( data ) - writes the data to the table.
 
-Table.append( data ) - appends the data to the table
+Table.append( data ) - appends the data to the table.
 
-Table.clear() - removes all data from the table
+Table.clear() - removes all the data from the table.
 
-Table.sheet() - returns connected sheet
+Table.sheet() - returns connected sheet.
+
+Table.types() - return types object defined for current table instance.
 
 
 

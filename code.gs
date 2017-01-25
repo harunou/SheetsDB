@@ -46,6 +46,12 @@ var SheetsDB = (function () {
     Table.create = function (sheet, types) {
         return new Table(sheet, types)
     }
+    Table.keys = function( sheet ){
+        var dataRange = sheet.getDataRange(),
+            rows = dataRange.getValues(),
+            headers = rows.shift();
+        return util.headersToKeys(headers);
+    }
     Table.prototype = {
         'sheet': function () {
             return this.sheet_;

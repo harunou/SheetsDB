@@ -2,20 +2,23 @@ Based on the _Reading Data from a Spreadsheet into JavaScript Objects_ AND _Writ
 
 https://web.archive.org/web/20130118042137/https://developers.google.com/apps-script/storing_data_spreadsheets#advanced
 
-##Spreadsheet.
+###Apps scrtipt project with the code
+https://script.google.com/d/1eAGteVN9UsYwqMbFTaUufhxMTMix8LPbcb1R2OdspaCbiuCT-XPLK5uj/edit?usp=sharing
+
+###Spreadsheet
 Should be owned or granted view or edit access.
 
-##Sheet.
+###Sheet
 First row is for column titles.
 
-##Columns and rows.
+###Columns and rows
 Column header (title) may contain white spaces and should be unique. First digit in the header will be ignored.
 For example, 'First name' header transforms to 'firstName' key, '1 title whatever' -> 'titleWhatever', 'Timestamp' -> 'timestamp'. 
 Columns with no headers in the data range will be ignored. Empty rows will be ignored as well.
 
-##Column types.
+###Column types
 Column data will be converted to the specified data type, if the type conversion exists for the column.
-Default type is a string. 
+Default type is a string.
 
 Default types:
 - N - number,
@@ -24,39 +27,41 @@ Default types:
 - A - array,
 - D - date.
 
-Custom type converters are allowed as function with __value__ and __write__ arguments. __value__ - value to convert, __write__ - defines if it's write(true) or read(false) operation.
+Custom type converters are allowed as function with __value__ and __write__ arguments. __value__ - value to convert, __write__ - defines, if it's write(true) or read(false) operation.
 
-##Cells: 
+###Cells
 All cells recommended to be formatted as plain text.
 
-##API:
-SheetsDB.connect( url, types ) - creates __Connection__ to the spreadsheet, __url__ is required, __types__ is optional.
+###API
+_SheetsDB.connect( url, types )_ - creates __Connection__ to the spreadsheet, __url__ is required, __types__ is optional.
 
-SheetsDB.getSheetIds( url ) - returns array of the sheet names and ids of the specified spreadsheet, __url__ is required.
+_Connection.spreadsheet()_ - returns connected spreadsheet.
 
-Connection.spreadsheet() - returns connected spreadsheet.
+_Connection.getSheetRefs()_ - returns an array of the sheet names and ids of the connected spreadsheet.
 
-Connection.table( ref, types ) - returns __Table__, __ref__ is the name or the ID of the sheet, required, __types__ are optional, but if defined, table instance will use it to convert the data, do not overwrite global types definition.  
+_Connection.timeZone()_ - returns the time zone for the spreadsheet.
 
-Connection.timeZone() - returns the time zone for the spreadsheet.
+_Connection.table( ref, types )_ - returns __Table__, __ref__ is required and should be the name or the ID of a sheet, __types__ are optional, but if defined, table instance will use it to convert the data, __types__ defined in this method, do not overwrite global types definition and affects only created Table instance.
 
-Table.get() - reads all data from the table.
+_Table.get()_ - reads all data from the table and returns array of objects.
 
-Table.set( data ) - writes the data to the table.
+_Table.set( data )_ - writes the data to the table.
 
-Table.append( data ) - appends the data to the table.
+_Table.append( data )_ - appends the data to the table.
 
-Table.clear() - removes all the data from the table.
+_Table.clear()_ - removes all the data from the table.
 
-Table.sheet() - returns connected sheet.
+_Table.sheet()_ - returns connected sheet.
 
-Table.types() - returns types object defined for the current table instance.
+_Table.types()_ - returns types object defined for the current table instance.
+
+_Table.keys()_ - return keys of the table.
 
 
 
 Use of the sheet ID instead of the name to refer is recommended.
 
-##Usage:
+###Usage
 ```
   //Test spreadsheet https://docs.google.com/spreadsheets/d/1x2OYeMHHRpNaDMgRzOhqa4m5rbQXN7lcPG1GprVtRTI/
   //Scenario with the sheet name
@@ -68,7 +73,7 @@ Use of the sheet ID instead of the name to refer is recommended.
       'Column 3': 'O',
       'Column 4': 'A',
       'Column 5': 'D',
-      'Column 6': function( value, write ){
+      'Column 6': function( value, write ){ //custom converter
         return value + Number(write)
       }
     }
@@ -76,23 +81,29 @@ Use of the sheet ID instead of the name to refer is recommended.
 
   var spreadsheetURL = 'https://docs.google.com/spreadsheets/d/1x2OYeMHHRpNaDMgRzOhqa4m5rbQXN7lcPG1GprVtRTI/'
   var connection = SheetsDB.connect( spreadsheetURL, types )
-  
   var data = connection.table( 'Sheet1' ).get()
-  Logger.log( data )
   connection.table( 'Sheet1' ).set( data )
   
   //  OR
   
   var sheet1 = connection.table( 'Sheet1' )
   var data = sheet1.get()
-  Logger.log( data )
   sheet1.set( data )
   
   // AND
   
   sheet1.append( data )
   data = sheet1.get()
-  Logger.log( data )
+  
+  
+  //Check instances
+  
+  connection instanceof SheetsDB.Connection //true
+  connection.constructor == SheetsDB.Connection //true	
+  
+  sheet1 instanceof SheetsDB.Table //true
+  sheet1.constructor == SheetsDB.Table //true	
+
   
   
   //Scenario with the sheet ID
@@ -112,52 +123,49 @@ Use of the sheet ID instead of the name to refer is recommended.
   
 
   var connection = SheetsDB.connect( spreadsheetURL, types )
-  
   var data = connection.table( 0 ).get()
-  Logger.log( data )
   
   //OR
   
   var data = connection.table( 'Sheet1' ).get()
-  Logger.log( data )
+  Logger.log( JSON.stringify( data ) )
   
   
   //Log
   /*
-  [
+ [
   {
-    Column6=70,
-    Column2=a,
-    Column3={
-      a=1
+    "column1": 1,
+    "column2": "a",
+    "column3": {
+      "a": 1
     },
-    Column4=[
-      1,
-      2,
-      3,
-      4,
-      5
+    "column4": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5"
     ],
-    Column5=MonJan2308: 30: 28GMT-04: 002017,
-    Column1=1.0
+    "column5": "2017-01-23T12:30:28.711Z",
+    "column6": "70"
   },
   {
-    Column6=a0,
-    Column2=a,
-    Column3={
-      a=2
+    "column1": 2,
+    "column3": {
+      "a": 2
     },
-    Column4=[
-      1,
-      2,
-      3,
-      4,
-      5
+    "column4": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5"
     ],
-    Column5=MonJan2308: 30: 28GMT-04: 002017,
-    Column1=2.0
+    "column5": "2017-01-23T12:30:28.711Z",
+    "column6": "a0"
   }
-  ]
+ ]
   */
 ```
 

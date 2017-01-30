@@ -13,8 +13,8 @@ var SheetsDB = (function () {
                 sheetId = sheet.getSheetId();
                 cache.getSheetReference(sheetId) 
                 || cache.addSheetReference(sheet, this.types_[sheetId] || this.types_[sheet.getName()]);
+                types = typeof types == 'undefined' ? cache.getTypes(sheetId) : util.parseTypes(types);	
             }
-            types = typeof types == 'undefined' ? cache.getTypes(sheetId) : util.parseTypes(types);
             return cache.getSheetReference(sheetId) 
                    && Table.create(cache.getSheet(sheetId), types);
         }
@@ -229,10 +229,10 @@ var SheetsDB = (function () {
         },
         'headersToKeys': function (headers) {
             var keys = new Array(headers.length),
-                k;
+                key;
             for (var i = 0, len = headers.length; i < len; i++) {
-                k = util.headerToKey(headers[i]);
-                keys[i] = ~keys.indexOf(k) || k === '' ? null : k;
+                key = util.headerToKey(headers[i]);
+                keys[i] = ~keys.indexOf(key) || key === '' ? null : key;
             }
             return keys;
         },

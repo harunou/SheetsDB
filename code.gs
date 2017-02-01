@@ -170,9 +170,7 @@ var SheetsDB = (function () {
         'getSheetById': function (spreadsheet, id) {
             var sheets = spreadsheet.getSheets();
             for (var i = 0, len = sheets.length; i < len; i++) {
-                if (sheets[i].getSheetId() === id) {
-                    return sheets[i];
-                };
+                if (sheets[i].getSheetId() === id) return sheets[i];
             };
             return null;
         },
@@ -237,7 +235,8 @@ var SheetsDB = (function () {
             return keys;
         },
         'headerToKey': function (header) {
-            return header.replace(/\s+(\w)/g, util.regexToUpperCase)
+            return header.toLowerCase()
+                         .replace(/\s+(\w)/g, util.regexToUpperCase)
                          .replace(/^\d+(\w)/, util.regexToLowerCase)
                          .replace(/^(\w)/   , util.regexToLowerCase);
         },

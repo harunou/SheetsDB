@@ -236,7 +236,7 @@ var SheetsDB = (function () {
         },
         'headerToKey': function (header) {
             return header.toLowerCase()
-                         .replace(/^[\d,\s]+/, '' )
+                         .replace(/^[\d,\s]+|[^\w,^\s]+/g, '')
                          .replace(/\s+(\w)/g, util.regexToUpperCase);
         },
         'regexToLowerCase': function (match, transform) {

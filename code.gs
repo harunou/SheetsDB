@@ -148,9 +148,8 @@ var SheetsDB = (function () {
         },
         'O': function (v, write) {
             return write ?
-                   (JSON.stringify(v)) :
+                   (Object.keys(v).length ? JSON.stringify(v) : '') :
                    (v === '' ? {} : JSON.parse(v));
-
         },
         'D': function (v, write) {
             return write ?
@@ -235,9 +234,10 @@ var SheetsDB = (function () {
             return keys;
         },
         'headerToKey': function (header) {
-            return header.toLowerCase()
-                         .replace(/^[\d,\s]+|[^\w,^\s]+|\s+$/g, '')
-                         .replace(/\s+(\w)/g, util.regexToUpperCase);
+            return header.replace(/^[\d,\s]+|[^\w,^\s]+|\s+$/g, '')
+			 .replace(/^([A-Z])/, util.regexToLowerCase)
+                         .replace(/(\s\w+)/g, util.regexToLowerCase)
+ 			 .replace(/\s+(\w)/g, util.regexToUpperCase);
         },
         'regexToLowerCase': function (match, transform) {
             return transform.toLowerCase();

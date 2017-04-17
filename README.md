@@ -2,21 +2,25 @@ Based on the _Reading Data from a Spreadsheet into JavaScript Objects_ AND _Writ
 
 https://web.archive.org/web/20130118042137/https://developers.google.com/apps-script/storing_data_spreadsheets#advanced
 
-###Apps scrtipt project with the code
+### Apps scrtipt project with the code
 https://script.google.com/d/1eAGteVN9UsYwqMbFTaUufhxMTMix8LPbcb1R2OdspaCbiuCT-XPLK5uj/edit?usp=sharing
 
-###Spreadsheet
+### Library key
+To include SheetsDB as library into your Google apps script project use next key
+_1gsvjRca2mBA3yjy9fbWeenKVyAK6gEwj-AkBIyFyZZTbqC2BB9e_WwS-_
+
+### Spreadsheet
 Should be owned or granted view or edit access.
 
-###Sheet
+### Sheet
 First row is for column titles.
 
-###Columns and rows
+### Columns and rows
 Column header (title) may contain white spaces and should be unique. First digit in the header will be ignored.
 For example, 'First name' header transforms to 'firstName' key, '1 title whatever' -> 'titleWhatever', 'Timestamp' -> 'timestamp'. 
 Columns with no headers in the data range will be ignored. Empty rows will be ignored as well.
 
-###Column types
+### Column types
 Column data will be converted to the specified data type, if the type conversion exists for the column.
 Default type is a string.
 
@@ -29,10 +33,10 @@ Default types:
 
 Custom type converters are allowed as function with __value__ and __write__ arguments. __value__ - value to convert, __write__ - defines, if it's write (true) or read (false) operation.
 
-###Cells
+### Cells
 All cells recommended to be formatted as plain text.
 
-###API
+### API
 _SheetsDB.connect( source, types )_ - creates __Connection__ to the spreadsheet, __source__ is required and can be an URL to a spreadsheet or a spreadsheet, __types__ is optional.
 
 _SheetsDB.isConnection( connection )_ - checks if connection is an instansce of Connection.
@@ -73,7 +77,7 @@ _Table.optimizeStorage()_- removes unused (empty) cells in the sheet.
 
 Use of the sheet ID instead of the name to refer is recommended.
 
-###Usage
+### Usage
 ```
   //Test spreadsheet https://docs.google.com/spreadsheets/d/1x2OYeMHHRpNaDMgRzOhqa4m5rbQXN7lcPG1GprVtRTI/
   //Scenario with sheet names

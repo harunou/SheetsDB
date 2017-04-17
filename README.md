@@ -21,19 +21,23 @@ Column data will be converted to the specified data type, if the type conversion
 Default type is a string.
 
 Default types:
-- N - number,
-- S - string,
-- O - object,
-- A - array,
-- D - date.
+* N - number,
+* S - string,
+* O - object,
+* A - array,
+* D - date.
 
-Custom type converters are allowed as function with __value__ and __write__ arguments. __value__ - value to convert, __write__ - defines, if it's write(true) or read(false) operation.
+Custom type converters are allowed as function with __value__ and __write__ arguments. __value__ - value to convert, __write__ - defines, if it's write (true) or read (false) operation.
 
 ###Cells
 All cells recommended to be formatted as plain text.
 
 ###API
-_SheetsDB.connect( url, types )_ - creates __Connection__ to the spreadsheet, __url__ is required, __types__ is optional.
+_SheetsDB.connect( source, types )_ - creates __Connection__ to the spreadsheet, __source__ is required and can be an URL to a spreadsheet or a spreadsheet, __types__ is optional.
+
+_SheetsDB.isConnection( connection )_ - checks if connection is an instansce of Connection.
+
+_SheetsDB.isTable( table )_ - checks if table is an instance of Table.
 
 _Connection.spreadsheet()_ - returns connected spreadsheet.
 
@@ -42,6 +46,12 @@ _Connection.getSheetRefs()_ - returns an array of the sheet names and ids of the
 _Connection.timeZone()_ - returns the time zone for the spreadsheet.
 
 _Connection.table( ref, types )_ - returns __Table__, __ref__ is required and should be the name or the ID of a sheet, __types__ are optional, but if defined, table instance will use it to convert the data, __types__ defined in this method, do not overwrite global types definition and affects only created Table instance.
+
+_Connection.getStorageLimit()_ - returns amount of cells allowed in the Google spreadsheet app.
+
+_Connection.getStorageUsed()_ - returns amount of cells used in the connected spreadsheet.
+
+_Connection.optimizeStorage()_ - removes unused (empty) cells in all sheets in the connected spreadsheet.
 
 _Table.get()_ - reads all data from the table and returns array of objects.
 
@@ -57,14 +67,16 @@ _Table.types()_ - returns types object defined for the current table instance.
 
 _Table.keys()_ - return keys of the table.
 
+_Table.getStorageUsed()_ - returns amount of cells used in the sheet.
 
+_Table.optimizeStorage()_- removes unused (empty) cells in the sheet.
 
 Use of the sheet ID instead of the name to refer is recommended.
 
 ###Usage
 ```
   //Test spreadsheet https://docs.google.com/spreadsheets/d/1x2OYeMHHRpNaDMgRzOhqa4m5rbQXN7lcPG1GprVtRTI/
-  //Scenario with the sheet name
+  //Scenario with sheet names
 	
   var types = {
     'Sheet1': {
@@ -98,15 +110,12 @@ Use of the sheet ID instead of the name to refer is recommended.
   
   //Check instances
   
-  connection instanceof SheetsDB.Connection //true
-  connection.constructor == SheetsDB.Connection //true	
-  
-  sheet1 instanceof SheetsDB.Table //true
-  sheet1.constructor == SheetsDB.Table //true	
+  SheetsDB.isConnection( connection ) //true
+  SheetsDB.isTable( sheet1 ) //true
 
   
   
-  //Scenario with the sheet ID
+  //Scenario with sheet IDs
   
   var types = {
     '0': {
@@ -168,12 +177,4 @@ Use of the sheet ID instead of the name to refer is recommended.
  ]
   */
 ```
-
-
-
-
-
-
-
-
 

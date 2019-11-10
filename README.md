@@ -1,151 +1,176 @@
-Based on the _Reading Data from a Spreadsheet into JavaScript Objects_ AND _Writing Data from JavaScript Objects to a Spreadsheet_ tutorials.
+The code reads data from Google spreadsheet into JavaScript Objects AND writes data from JavaScript Objects to the spreadsheet.
 
-https://web.archive.org/web/20130118042137/https://developers.google.com/apps-script/storing_data_spreadsheets#advanced
+### Examples.
+Spreadsheet with data table and attached script
+https://docs.google.com/spreadsheets/d/1x2OYeMHHRpNaDMgRzOhqa4m5rbQXN7lcPG1GprVtRTI/edit
 
-### Apps scrtipt project with the code
-https://script.google.com/d/1eAGteVN9UsYwqMbFTaUufhxMTMix8LPbcb1R2OdspaCbiuCT-XPLK5uj/edit?usp=sharing
+Apps scrtipt project with the code
+https://script.google.com/d/1eAGteVN9UsYwqMbFTaUufhxMTMix8LPbcb1R2OdspaCbiuCT-XPLK5uj/edit
 
-### Library key
-To include SheetsDB as library into your Google apps script project use next key
-_1gsvjRca2mBA3yjy9fbWeenKVyAK6gEwj-AkBIyFyZZTbqC2BB9e_WwS-_
+### How to include SheetsDB into your project.
+To include SheetsDB as library into your Google apps script project use the next Script Id
+```
+1gsvjRca2mBA3yjy9fbWeenKVyAK6gEwj-AkBIyFyZZTbqC2BB9e_WwS-
+```
 
-### Spreadsheet
-Should be owned or granted view or edit access.
+### Spreadsheet requirements.
+Spreadsheet with should be owned or granted view (to read) or edit (to write) access.
 
-### Sheet
-First row is for column titles.
-
-### Columns and rows
-Column header (title) may contain white spaces and should be unique. First digit in the header will be ignored.
-For example, 'First name' header transforms to 'firstName' key, '1 title whatever' -> 'titleWhatever', 'Timestamp' -> 'timestamp'. 
-Columns with no headers in the data range will be ignored. Empty rows will be ignored as well.
-
-### Column types
-Column data will be converted to the specified data type, if the type conversion exists for the column.
-Default type is a string.
-
-Default types:
-* N - number,
-* S - string,
-* O - object,
-* A - array,
-* D - date.
-
-Custom type converters are allowed as function with __value__ and __write__ arguments. __value__ - value to convert, __write__ - defines, if it's write (true) or read (false) operation.
-
-### Cells
 All cells recommended to be formatted as plain text.
 
+Sheet's first row is for column headers. Column header may contain white spaces and should be unique. First digit in the header will be ignored.
+For example, `"First name"` header transforms to `"firstName"` key, `"1 title whatever"` → `"titleWhatever"`, `"Timestamp"` → `"timestamp"`.
+Columns without headers within the data table range are ignored. Empty rows are ignored as well.
+
+### Data types.
+Data in each column is converted to the specified data type, if the type conversion declared for the column.
+Default type for reads and writes is string.
+
+Codes used in the type declaration:
+* `N` - number,
+* `S` - string,
+* `O` - object,
+* `A` - array,
+* `D` - date.
+
+Example type declaraion:
+```javascript
+var types = {
+  sheetNameOrId: {
+    "Column 1": "N",
+    "Column 2": "S",
+    "Column 3": "O",
+    "Column 4": "A",
+    "Column 5": "D"
+  }
+};
+```
+Custom type converters are allowed as function with __value__ and __isWrite__ arguments. __value__ - value to convert, __isWrite__ - defines, if it's write (true) or read (false) operation.
+```javascript
+function customConverter(value, isWrite) {
+    var result;
+    if(isWrite) {
+        result = JSON.stringify(value);
+    } else {
+        result = parseInt(value);
+    }
+    return result;
+}
+
+var types = {
+  sheetNameOrId: {
+    "Column 1": customConverter,
+  }
+};
+```
+
 ### API
-_SheetsDB.connect( source, types )_ - creates __Connection__ to the spreadsheet, __source__ is required and can be an URL to a spreadsheet or a spreadsheet, __types__ is optional.
+`SheetsDB.connect(source, types)` - creates connection to the spreadsheet, `source` is required and can be an URL to a spreadsheet or a spreadsheet, `types` is optional.
 
-_SheetsDB.isConnection( connection )_ - checks if connection is an instansce of Connection.
+`SheetsDB.isConnection(connection)` - checks if connection is an instansce of `Connection`.
 
-_SheetsDB.isTable( table )_ - checks if table is an instance of Table.
+`SheetsDB.isTable(table)` - checks if table is an instance of `Table`.
 
-_Connection.spreadsheet()_ - returns connected spreadsheet.
+`Connection.spreadsheet()` - returns connected spreadsheet.
 
-_Connection.getSheetRefs()_ - returns an array of the sheet names and ids of the connected spreadsheet.
+`Connection.getSheetRefs()` - returns an array of the sheet names and ids of the connected spreadsheet.
 
-_Connection.timeZone()_ - returns the time zone for the spreadsheet.
+`Connection.timeZone()` - returns the time zone for the spreadsheet.
 
-_Connection.table( ref, types )_ - returns __Table__, __ref__ is required and should be the name or the ID of a sheet, __types__ are optional, but if defined, table instance will use it to convert the data, __types__ defined in this method, do not overwrite global types definition and affects only created Table instance.
+`Connection.table(ref, types)` - returns instance of `Table`, `ref` is required and should be the name or the ID of a sheet, `types` are optional, but if defined, table instance will use it to convert the data, `types` defined in this method, do not overwrite global types definition and affects only created Table instance.
 
-_Connection.getStorageLimit()_ - returns amount of cells allowed in the Google spreadsheet app.
+Use of the sheet id instead of the name to refer is recommended.
 
-_Connection.getStorageUsed()_ - returns amount of cells used in the connected spreadsheet.
+`Connection.getStorageLimit()` - returns amount of cells allowed in the Google spreadsheet app.
 
-_Connection.optimizeStorage()_ - removes unused (empty) cells in all sheets in the connected spreadsheet.
+`Connection.getStorageUsed()` - returns amount of cells used in the connected spreadsheet.
 
-_Table.get()_ - reads all data from the table and returns array of objects.
+`Connection.optimizeStorage()` - removes unused (empty) cells in all sheets in the connected spreadsheet.
 
-_Table.set( data )_ - writes the data to the table.
+`Table.get()` - reads all data from the table and returns array of objects.
 
-_Table.append( data )_ - appends the data to the table.
+`Table.set(data)` - writes the data to the table.
 
-_Table.clear()_ - removes all the data from the table.
+`Table.append(data)` - appends the data to the table.
 
-_Table.sheet()_ - returns connected sheet.
+`Table.clear()` - removes all the data from the table.
 
-_Table.types()_ - returns types object defined for the current table instance.
+`Table.sheet()` - returns connected sheet.
 
-_Table.keys()_ - return keys of the table.
+`Table.types()` - returns types object defined for the current table instance.
 
-_Table.getStorageUsed()_ - returns amount of cells used in the sheet.
+`Table.keys()` - return keys of the table.
 
-_Table.optimizeStorage()_- removes unused (empty) cells in the sheet.
+`Table.getStorageUsed()` - returns amount of cells used in the sheet.
 
-Use of the sheet ID instead of the name to refer is recommended.
+`Table.optimizeStorage()`- removes unused (empty) cells in the sheet.
 
 ### Usage
-```
-  //Test spreadsheet https://docs.google.com/spreadsheets/d/1x2OYeMHHRpNaDMgRzOhqa4m5rbQXN7lcPG1GprVtRTI/
-  //Scenario with sheet names
-	
-  var types = {
-    'Sheet1': {
-      'Column 1': 'N',
-      'Column 2': 'S',
-      'Column 3': 'O',
-      'Column 4': 'A',
-      'Column 5': 'D',
-      'Column 6': function( value, write ){ //custom converter
-        return value + Number(write)
-      }
+```javascript
+//Example spreadsheet https://docs.google.com/spreadsheets/d/1x2OYeMHHRpNaDMgRzOhqa4m5rbQXN7lcPG1GprVtRTI/edit
+
+//Scenario with sheet names
+
+var types = {
+  Sheet1: {
+    "Column 1": "N",
+    "Column 2": "S",
+    "Column 3": "O",
+    "Column 4": "A",
+    "Column 5": "D",
+    "Column 6": function(value, write) {
+      //custom converter
+      return value + Number(write);
     }
   }
+};
 
-  var spreadsheetURL = 'https://docs.google.com/spreadsheets/d/1x2OYeMHHRpNaDMgRzOhqa4m5rbQXN7lcPG1GprVtRTI/'
-  var connection = SheetsDB.connect( spreadsheetURL, types )
-  var data = connection.table( 'Sheet1' ).get()
-  connection.table( 'Sheet1' ).set( data )
-  
-  //  OR
-  
-  var sheet1 = connection.table( 'Sheet1' )
-  var data = sheet1.get()
-  sheet1.set( data )
-  
-  // AND
-  
-  sheet1.append( data )
-  data = sheet1.get()
-  
-  
-  //Check instances
-  
-  SheetsDB.isConnection( connection ) //true
-  SheetsDB.isTable( sheet1 ) //true
+var spreadsheetURL = "https://docs.google.com/spreadsheets/d/1x2OYeMHHRpNaDMgRzOhqa4m5rbQXN7lcPG1GprVtRTI/";
+var connection = SheetsDB.connect(spreadsheetURL, types);
+var data = connection.table("Sheet1").get();
+connection.table("Sheet1").set(data);
 
-  
-  
-  //Scenario with sheet IDs
-  
-  var types = {
-    '0': {
-      'Column 1': 'N',
-      'Column 2': 'S',
-      'Column 3': 'O',
-      'Column 4': 'A',
-      'Column 5': 'D',
-      'Column 6': function( value, write ){
-        return value + Number(write)
-      }
+//  OR
+
+var sheet1 = connection.table("Sheet1");
+var data = sheet1.get();
+sheet1.set(data);
+
+// AND
+
+sheet1.append(data);
+data = sheet1.get();
+
+//Check instances
+
+SheetsDB.isConnection(connection); //true
+SheetsDB.isTable(sheet1); //true
+
+//Scenario with sheet IDs
+
+var types = {
+  "0": {
+    "Column 1": "N",
+    "Column 2": "S",
+    "Column 3": "O",
+    "Column 4": "A",
+    "Column 5": "D",
+    "Column 6": function(value, write) {
+      return value + Number(write);
     }
   }
-  
+};
 
-  var connection = SheetsDB.connect( spreadsheetURL, types )
-  var data = connection.table( 0 ).get()
-  
-  //OR
-  
-  var data = connection.table( 'Sheet1' ).get()
-  Logger.log( JSON.stringify( data ) )
-  
-  
-  //Log
-  /*
+var connection = SheetsDB.connect(spreadsheetURL, types);
+var data = connection.table(0).get();
+
+//OR
+
+var data = connection.table("Sheet1").get();
+Logger.log(JSON.stringify(data));
+
+//Log
+/*
  [
   {
     "column1": 1,
@@ -179,6 +204,5 @@ Use of the sheet ID instead of the name to refer is recommended.
     "column6": "a0"
   }
  ]
-  */
+*/
 ```
-

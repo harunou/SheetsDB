@@ -1,20 +1,20 @@
 The code reads data from Google spreadsheet into JavaScript Objects AND writes data from JavaScript Objects to the spreadsheet.
 
-### Examples.
+### Examples
 Spreadsheet with data table and attached script
 https://docs.google.com/spreadsheets/d/1x2OYeMHHRpNaDMgRzOhqa4m5rbQXN7lcPG1GprVtRTI/edit
 
 Apps scrtipt project with the code
 https://script.google.com/d/1eAGteVN9UsYwqMbFTaUufhxMTMix8LPbcb1R2OdspaCbiuCT-XPLK5uj/edit
 
-### How to include SheetsDB into your project.
+### How to include SheetsDB into your project
 To include SheetsDB as library into your Google apps script project use the next Script Id
 ```
 1gsvjRca2mBA3yjy9fbWeenKVyAK6gEwj-AkBIyFyZZTbqC2BB9e_WwS-
 ```
 
-### Spreadsheet requirements.
-Spreadsheet with should be owned or granted view (to read) or edit (to write) access.
+### Spreadsheet requirements
+Spreadsheet should be owned or granted view (to read) or edit (to write) access.
 
 All cells recommended to be formatted as plain text.
 
@@ -22,7 +22,7 @@ Sheet's first row is for column headers. Column header may contain white spaces 
 For example, `"First name"` header transforms to `"firstName"` key, `"1 title whatever"` → `"titleWhatever"`, `"Timestamp"` → `"timestamp"`.
 Columns without headers within the data table range are ignored. Empty rows are ignored as well.
 
-### Data types.
+### Data types
 Data in each column is converted to the specified data type, if the type conversion declared for the column.
 Default type for reads and writes is string.
 

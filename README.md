@@ -6,7 +6,7 @@ data from JavaScript Objects to the spreadsheet.
 ## Examples
 
 **Spreadsheet with data table and attached script:**
-<https://docs.google.com/spreadsheets/d/1x2OYeMHHRpNaDMgRzOhqa4m5rbQXN7lcPG1GprVtRTI/edit>
+<https://docs.google.com/spreadsheets/d/1ksyXmeb-TBAe8Ywi1VE3MrxjzzMkxP4Vfb0ZxghRI1M>
 
 **Apps Script project with the code:**
 <https://script.google.com/home/projects/1O3oDa3J8VEqasvJmVAOHLcL4shovmqF3PItdIgFC0ehIRhTZjBnQH84k>
